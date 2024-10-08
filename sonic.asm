@@ -10,8 +10,8 @@
 	cpu 68000
 
 EnableSRAM	  = 0	; change to 1 to enable SRAM
-BackupSRAM	  = 1
-AddressSRAM	  = 3	; 0 = odd+even; 2 = even only; 3 = odd only
+BackupSRAM	  = 0
+AddressSRAM	  = 0	; 0 = odd+even; 2 = even only; 3 = odd only
 
 ; Change to 0 to build the original version of the game, dubbed REV00
 ; Change to 1 to build the later vesion, dubbed REV01, which includes various bugfixes and enhancements
@@ -115,11 +115,7 @@ loc_E0:
 		dc.b "(C)SEGA 1991.APR" ; Copyright holder and release date (generally year)
 		dc.b "HEDGENIK THE HOGWART FILED CHERRIES             " ; Domestic name
 		dc.b "HEDGENIK THE HOGWART FILED CHERRIES             " ; International name
-		if Revision=0
-		dc.b "GM MK-1079 -00"   ; Serial/version number (Rev 0)
-		else
-			dc.b "GM 00004049-01" ; Serial/version number (Rev non-0)
-		endif
+		dc.b "GM MK-1079 -00"   ; Serial/version number
 Checksum:
 		if Revision=0
 		dc.w $264A	; Hardcoded to make it easier to check for ROM correctness
@@ -2354,17 +2350,17 @@ LevSel_PlaySnd:
 ; ===========================================================================
 
 LevSel_Ending:
-		move.b	#id_Ending,(v_gamemode).w ; set screen mode to $18 (Ending)
-		move.w	#(id_EndZ<<8),(v_zone).w ; set level to 0600 (Ending)
-		rts	
-; ===========================================================================
-
-LevSel_Credits:
 		move.b	#id_Credits,(v_gamemode).w ; set screen mode to $1C (Credits)
 		move.b	#bgm_Credits,d0
 		bsr.w	PlaySound_Special ; play credits music
 		move.w	#0,(v_creditsnum).w
 		rts	
+; ===========================================================================
+
+LevSel_Credits:
+		move.b	#id_Ending,(v_gamemode).w ; set screen mode to $18 (Ending)
+		move.w	#(id_EndZ<<8),(v_zone).w ; set level to 0600 (Ending)
+		rts
 ; ===========================================================================
 
 LevSel_Level_SS:
