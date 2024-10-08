@@ -111,12 +111,12 @@ loc_E0:
 		dc.l ErrorTrap
 		dc.l ErrorTrap
 	endif
-		dc.b "SEGA MEGA DRIVE " ; Hardware system ID (Console name)
+		dc.b "NOSE MASTER DRIV" ; Hardware system ID (Console name)
 		dc.b "(C)SEGA 1991.APR" ; Copyright holder and release date (generally year)
-		dc.b "SONIC THE               HEDGEHOG                " ; Domestic name
-		dc.b "SONIC THE               HEDGEHOG                " ; International name
+		dc.b "HEDGENIK THE HOGWART FILED CHERRIES             " ; Domestic name
+		dc.b "HEDGENIK THE HOGWART FILED CHERRIES             " ; International name
 		if Revision=0
-		dc.b "GM 00001009-00"   ; Serial/version number (Rev 0)
+		dc.b "GM MK-1079 -00"   ; Serial/version number (Rev 0)
 		else
 			dc.b "GM 00004049-01" ; Serial/version number (Rev non-0)
 		endif
@@ -508,17 +508,17 @@ ErrorText:	dc.w .exception-ErrorText, .bus-ErrorText
 		dc.w .trapv-ErrorText, .privilege-ErrorText
 		dc.w .trace-ErrorText, .line1010-ErrorText
 		dc.w .line1111-ErrorText
-.exception:	dc.b "ERROR EXCEPTION    "
-.bus:		dc.b "BUS ERROR          "
-.address:	dc.b "ADDRESS ERROR      "
-.illinstruct:	dc.b "ILLEGAL INSTRUCTION"
-.zerodivide:	dc.b "@ERO DIVIDE        "
-.chkinstruct:	dc.b "CHK INSTRUCTION    "
+.exception:	dc.b "YOU FUCKING SUCK   "
+.bus:		dc.b "BOO                "
+.address:	dc.b "WII U              "
+.illinstruct:	dc.b "TED SUCKS BALLS    "
+.zerodivide:	dc.b "ZERO STONES        "
+.chkinstruct:	dc.b "SONIC BOOM         "
 .trapv:		dc.b "TRAPV INSTRUCTION  "
 .privilege:	dc.b "PRIVILEGE VIOLATION"
-.trace:		dc.b "TRACE              "
-.line1010:	dc.b "LINE 1010 EMULATOR "
-.line1111:	dc.b "LINE 1111 EMULATOR "
+.trace:		dc.b "FUCK YOU           "
+.line1010:	dc.b "EMULATOR ERROR 1111"
+.line1111:	dc.b "EMULATOR ERROR 1010"
 		even
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
@@ -2168,10 +2168,10 @@ Tit_LoadText:
 		bsr.w	LevelSizeLoad
 		bsr.w	DeformLayers
 		lea	(v_16x16).w,a1
-		lea	(Blk16_GHZ).l,a0 ; load	GHZ 16x16 mappings
+		lea	(Blk16_SBZ).l,a0 ; load	GHZ 16x16 mappings
 		move.w	#make_art_tile(ArtTile_Level,0,FALSE),d0
 		bsr.w	EniDec
-		lea	(Blk256_GHZ).l,a0 ; load GHZ 256x256 mappings
+		lea	(Blk256_SYZ).l,a0 ; load GHZ 256x256 mappings
 		lea	(v_256x256&$FFFFFF).l,a1
 		bsr.w	KosDec
 		bsr.w	LevelLayoutLoad
@@ -2192,38 +2192,20 @@ Tit_LoadText:
 		copyTilemap	v_256x256&$FFFFFF,vram_fg+$206,34,22
 
 		locVRAM	ArtTile_Level*tile_size
-		lea	(Nem_GHZ_1st).l,a0 ; load GHZ patterns
+		lea	(Nem_MZ).l,a0 ; load GHZ patterns
 		bsr.w	NemDec
-		moveq	#palid_Title,d0	; load title screen palette
+		moveq	#palid_LZ,d0	; load title screen palette
 		bsr.w	PalLoad_Fade
-		move.b	#bgm_Title,d0
+		move.b	#bgm_Ending,d0
 		bsr.w	PlaySound_Special	; play title screen music
 		move.b	#0,(f_debugmode).w ; disable debug mode
-		move.w	#$178,(v_demolength).w ; run title screen for $178 frames
-		
-	if FixBugs
-		clearRAM v_sonicteam,v_sonicteam+object_size
-	else
-		; Bug: this only clears half of the "SONIC TEAM PRESENTS" slot.
-		; This is responsible for why the "PRESS START BUTTON" text doesn't
-		; show up, as the routine ID isn't reset.
-		clearRAM v_sonicteam,v_sonicteam+object_size/2
-	endif
-
-		move.b	#id_TitleSonic,(v_titlesonic).w ; load big Sonic object
-		move.b	#id_PSBTM,(v_pressstart).w ; load "PRESS START BUTTON" object
-		;clr.b	(v_pressstart+obRoutine).w ; The 'Mega Games 10' version of Sonic 1 added this line, to fix the 'PRESS START BUTTON' object not appearing
-
+		move.w	#$9999,(v_demolength).w ; run title screen for $178 frames
 		if Revision<>0
 			tst.b   (v_megadrive).w	; is console Japanese?
 			bpl.s   .isjap		; if yes, branch
 		endif
 
-		move.b	#id_PSBTM,(v_titletm).w ; load "TM" object
-		move.b	#3,(v_titletm+obFrame).w
 .isjap:
-		move.b	#id_PSBTM,(v_ttlsonichide).w ; load object which hides part of Sonic
-		move.b	#2,(v_ttlsonichide+obFrame).w
 		jsr	(ExecuteObjects).l
 		bsr.w	DeformLayers
 		jsr	(BuildSprites).l
