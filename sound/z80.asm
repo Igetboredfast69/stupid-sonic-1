@@ -195,7 +195,7 @@ zPlaySEGAPCMLoop:
 	ld	(ix+0),c		; 19	; Select DAC output register
 	ld	(ix+1),a		; 19	; Send current data
 
-	ld	b,pcmLoopCounter(16000)	; 7	; b = pitch of the SEGA sample
+	ld	b,pcmLoopCounter(16500)	; 7	; b = pitch of the SEGA sample
 	djnz	$			; 8	; Pitch loop
 
 	inc	de			; 6	; Point to next byte of DAC sample
@@ -215,10 +215,10 @@ zPCMMetadata macro label,sampleRate
 
 ; DPCM metadata
 zPCM_Table:
-	zPCMMetadata zDAC_Kick,8250
-	zPCMMetadata zDAC_Snare,24000
+	zPCMMetadata zDAC_Kick,10
+	zPCMMetadata zDAC_Snare,10
 zTimpani_Pitch = $+4
-	zPCMMetadata zDAC_Timpani,7250
+	zPCMMetadata zDAC_Timpani,10
 
 ; DPCM data
 zDAC_Kick:
